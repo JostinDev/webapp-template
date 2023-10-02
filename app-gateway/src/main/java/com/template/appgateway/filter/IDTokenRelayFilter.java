@@ -16,7 +16,7 @@ public class IDTokenRelayFilter implements WebFilter {
 
         // Prevent sending the ID token for non API calls
         String path = String.valueOf(exchange.getRequest().getPath());
-        boolean isAPICall = path.contains("api");
+        boolean isAPICall = path.contains("/api/");
         if(!isAPICall) {
             return chain.filter(exchange);
         }

@@ -49,7 +49,7 @@ public class SecurityConfig {
 
         http.authorizeExchange(authorize -> authorize
                         .pathMatchers("/api/**").authenticated()
-                        .pathMatchers("/api/challenge/**").permitAll()
+                        .pathMatchers("/api/public/**").permitAll()
                         .anyExchange().permitAll()
                 )
                 .csrf(ServerHttpSecurity.CsrfSpec::disable);

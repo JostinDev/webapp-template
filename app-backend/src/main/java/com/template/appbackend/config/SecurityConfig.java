@@ -14,7 +14,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(exchanges -> exchanges
-                        .requestMatchers("/challenge/**").permitAll()
+                        .requestMatchers("/public/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
