@@ -1,0 +1,58 @@
+spring:
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  security:
+    oauth2:
+      client:
+        registration:
+          auth0:
+            client-id: ${AUTH0_CLIENT_ID}
+            client-secret: ${AUTH0_CLIENT_SECRET}
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          auth0:
+            # trailing slash is important!
+            issuer-uri: ${AUTH0_ISSUER_URI}
+
+  cloud:
+    gateway:
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: http://localhost:3000
+            allowedHeaders: "*"
+            allowedMethods:
+              - GET
+              - POST
+            allowCredentials: true
+      routes:
+        - id: backend
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/**
+          filters:
+            - StripPrefix=1
+
+        - id: websocket
+          uri: ws://localhost:3000/
+          predicates:
+            - Path=/websocket/**
+
+        - id: frontend
+          uri: http://localhost:3000
+          predicates:
+            - Path=/**
+
+
+auth0:
+  audience: ${AUTH0_AUDIENCE}
+
+debug: true
+logging:
+  level:
+    root: debug
