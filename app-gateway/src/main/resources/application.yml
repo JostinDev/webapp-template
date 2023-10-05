@@ -52,6 +52,8 @@ spring:
 auth0:
   audience: ${AUTH0_AUDIENCE}
 
+logoutReturnUrl: http://localhost:8080/
+
 debug: true
 logging:
   level:

@@ -23,6 +23,18 @@ import java.net.URI;
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
+
+    @Value("${spring.security.oauth2.client.provider.auth0.issuer-uri}")
+    private String issuer;
+
+    @Value("${spring.security.oauth2.client.registration.auth0.client-id}")
+    private String clientId;
+
+    @Value("${auth0.audience}")
+    private String audience;
+
+    @Value("${logoutReturnUrl}")
+    private String logoutReturnUrl;
     private final ReactiveClientRegistrationRepository clientRegistrationRepository;
 
 
@@ -30,9 +42,6 @@ public class SecurityConfig {
        this.clientRegistrationRepository = clientRegistrationRepository;
     }
 
-
-    @Value("${auth0.audience}")
-    private String audience;
     @Bean
     SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) throws Exception {
 
@@ -63,23 +72,15 @@ public class SecurityConfig {
         return new Auth0CustomAuthorizationRequestResolver(audience, reactiveClientRegistrationRepository);
     }
 
-    @Value("${spring.security.oauth2.client.provider.auth0.issuer-uri}")
-    private String issuer;
-    @Value("${spring.security.oauth2.client.registration.auth0.client-id}")
-    private String clientId;
-
-
     @Bean
     public ServerLogoutSuccessHandler logoutSuccessHandlerTest() {
-        // Change this as needed to URI where users should be redirected to after logout
-        String returnTo = "http://localhost:8080/";
 
         // Build the URL to log the user out of Auth0 and redirect them to the home page.
         // URL will look like https://YOUR-DOMAIN/v2/logout?clientId=YOUR-CLIENT-ID&returnTo=http://localhost:3000
         String logoutUrl = UriComponentsBuilder
                 .fromHttpUrl(issuer + "v2/logout?client_id={clientId}&returnTo={returnTo}")
                 .encode()
-                .buildAndExpand(clientId, returnTo)
+                .buildAndExpand(clientId, logoutReturnUrl)
                 .toUriString();
 
         RedirectServerLogoutSuccessHandler handler = new RedirectServerLogoutSuccessHandler();
